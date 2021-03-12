@@ -28,7 +28,8 @@ const seedDB = async () => {
             title: `${sample(descriptors)} ${sample(places)}`,
             image: 'https://source.unsplash.com/collection/827743',
             description: "something.....tbc",
-            price: Math.floor(Math.random()*100)+20
+            price: Math.floor(Math.random()*100)+20,
+            author: '6049d8afe3eb602c3862ec10'
         })
         await camp.save()
     }
