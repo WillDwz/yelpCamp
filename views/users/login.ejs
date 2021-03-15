@@ -1,13 +1,22 @@
-<% layout('layouts/boilerplate') %> 
-<h1>Login</h1>
-<form action="/login" method="POST" novalidate class="needs-validation">
-    <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input class="form-control" type="text" id="username" name="username" required>
-    </div>    
-    <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input class="form-control" type="password" id="password" name="password" required>
+<% layout('layouts/boilerplate')%>
+<div class="row">
+    <div class="col-6 offset-3">
+        <!-- <img src="https://source.unsplash.com/collection/9412158/1600x900" -->
+        <!-- alt="" class="card-img-top" /> -->
+        <h5 class="text-center">Login</h5>
+        <form action="/login" method="POST" class="validated-form" novalidate>
+            <div class="mb-3">
+                <label class="form-label" for="username">Username</label>
+                <input class="form-control" type="text" id="username" name="username" autofocus required>
+            </div>
+        
+            <div class="mb-3">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-control" type="password" id="password" name="password" required>
+            </div>
+            <div class="d-grid gap-2">
+                <button class="btn btn-primary">Login</button>
+            </div>
+        </form>
     </div>
-    <button class="btn btn-primary">Login</button>   
-</form>
+</div>
