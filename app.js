@@ -12,14 +12,18 @@ const ExpressError = require('./utilities/ExpressError')
 const methodOverride = require('method-override')
 const passport = require('passport')
 const localStrategy = require('passport-local')
+const mongoSanitize = require('express-mongo-sanitize')
 
 const User = require('./models/user')
 const userRoute = require('./routes/users')
 const campgroundRoute = require('./routes/campgrounds')
 const reviewRoute = require('./routes/reviews')
 
+const MongoStore = require('connect-mongo')
+const db_Url = process.env.db_Url || 'mongodb://localhost:27017/yelp-camp'
+
 // connecting to mongoDB
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+mongoose.connect(db_Url, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -41,10 +45,20 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(mongoSanitize())
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+const store = MongoStore.create({
+    mongoUrl: db_Url,
+    touchAfter: 24 * 3600,
+    crypto: {
+        secret
+    }
+  })
 //session
 const sessionConfig = {
-    secret: "someshit",
+    store,
+    secret,
     resave: false,
     saveUninitialized: true,
     // store: mongodb
@@ -53,6 +67,7 @@ const sessionConfig = {
         expires: Date.now() + 1000*60*60*24*7,
         maxAge: 1000*60*60*24*7
     }
+    
 }
 app.use(session(sessionConfig))
 
@@ -89,14 +104,15 @@ app.all('*', (req, res, next) => {
 })
 
 //error handler
-app.use((error,req,res,next)=>{
-    const {status = 500} = error
-    if (! error.message) error.message = "bad,bad"
-    res.status(status).render('error',{error})
+app.use((err, req, res, next) => {
+    const { statusCode = 500 } = err;
+    if (!err.message) err.message = 'Oh No, Something Went Wrong!'
+    res.status(statusCode).render('error', { err })
 })
 
+const port = process.env.PORT || 3000
 //server
-app.listen(3000, () => {
-    console.log("Serving on port 3000")
+app.listen(port, () => {
+    console.log(`Serving on port ${port}`)
 })
 
